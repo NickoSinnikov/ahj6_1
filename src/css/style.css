@@ -1,0 +1,39 @@
+*, body{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+li{
+    list-style: none;
+}
+
+.container{
+    margin: auto;
+    padding: 10px;
+    width:1080px;
+    height: 100%;
+    background-color: rgba(51, 173, 255, 0.76);
+    display: flex;
+
+}
+
+.column{
+    width: 33%;
+    border-radius: 7px;
+    background-color: rgb(236, 236, 236);
+    margin: 0 3px 0 3px;
+    
+}
+
+.column-content{
+    display: flex;
+    flex-direction: column;
+}
+
+.content-item{
+    margin-bottom: 5px;
+    padding:8px;
+    background-color: aliceblue;
+    border-radius: 5px;
+}
