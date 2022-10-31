@@ -23,7 +23,14 @@ li{
     border-radius: 7px;
     background-color: rgb(236, 236, 236);
     margin: 0 3px 0 3px;
+    padding: 8px;
     
+}
+
+.column-header{
+    display:flex;
+    flex-direction: row;
+    justify-content: space-between;
 }
 
 .column-content{
@@ -36,4 +43,14 @@ li{
     padding:8px;
     background-color: aliceblue;
     border-radius: 5px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.column-title{
+    border: 1px solid red
+}
+
+.btn-add{
+    cursor: pointer;
 }
