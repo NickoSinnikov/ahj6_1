@@ -51,6 +51,10 @@ li{
     border: 1px solid red
 }
 
-.btn-add{
+.add-item{
     cursor: pointer;
+}
+
+.add-form-hidden{
+    display: none;
 }
