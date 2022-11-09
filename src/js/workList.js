@@ -86,6 +86,7 @@ export default class WorkList {
         this.ghostEl.style.top = `${
           event.pageY - this.ghostEl.offsetHeight / 2
         }px`;
+        this.draggedEl.classList.add("dragged-elem");
       });
 
       el.addEventListener("mousemove", (event) => {
@@ -129,6 +130,7 @@ export default class WorkList {
   endMove() {
     document.body.style.cursor = "auto";
     document.body.removeChild(this.ghostEl);
+    this.draggedEl.classList.remove("dragged-elem");
     this.ghostEl = null;
     this.draggedEl = null;
   }

@@ -44,5 +44,6 @@
   },
   "dependencies": {
     "core-js": "3"
-  }
+  },
+  "repository": "https://github.com/NickoSinnikov/ahj6_1.git"
 }
