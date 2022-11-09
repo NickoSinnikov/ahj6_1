@@ -10,16 +10,13 @@
 
 <body>
     <div class="container">
-        <div class="column column_1">
+        <div class="column" id="todo">
             <div class="column-header">
                 <div class="column-title">TODO</div>
                 <div class="column-menu"></div>
             </div>
             <div class="column-content">
-                <div class="content-item">
-                    <span>Hello!!!</span>
-                    <button type="submit" class="delete-item hidden">&#10006</button>
-                </div>
+                
             </div>
             <div class="add-item">+ Add another card</div>
             <form class="add-form add-form-hidden">
@@ -32,7 +29,7 @@
             </form>
         </div>
 
-        <div class="column">
+        <div class="column" id="inProgress">
             <div class="column-header">
                 <div class="column-title">In progress</div>
                 <div class="column-menu"></div>
@@ -48,7 +45,7 @@
                 
             </form>
         </div>
-        <div class="column">
+        <div class="column" id="done">
             <div class="column-header">
                 <div class="column-title">Done</div>
                 <div class="column-menu"></div>

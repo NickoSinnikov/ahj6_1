@@ -1,3 +1,5 @@
+import TrelloStorage from "./TrelloStorage";
+
 export default class WorkList {
   constructor() {
     this.columnsContent = document.querySelector(".column-content");
@@ -5,9 +7,19 @@ export default class WorkList {
     this.forms = Array.from(document.getElementsByTagName("form"));
     this.draggedEl = null;
     this.ghostEl = null;
+    this.todoList = document.getElementById("todo");
+    this.progressList = document.getElementById("inProgress");
+    this.doneList = document.getElementById("done");
+    this.topDiff = null;
+    this.leftDiff = null;
   }
 
   init() {
+    console.log("init");
+    document.addEventListener("DOMContentLoaded", () => {
+      console.log("pfufe");
+      this.load();
+    });
     this.action();
     this.addItem();
   }
@@ -20,16 +32,13 @@ export default class WorkList {
         const parent = item.closest(".column").querySelector(".column-content");
         const addItemDiv = document.createElement("div");
         addItemDiv.className = "content-item";
-        addItemDiv.innerHTML = `<span>${input.value}</span> <button type="submit" class="delete-item hidden">&#10006</button>`;
+        addItemDiv.innerHTML = `<span class="item-text">${input.value}</span> <button type="submit" class="delete-item hidden">&#10006</button>`;
         parent.appendChild(addItemDiv);
         item.reset();
         item.classList.add("add-form-hidden");
+        this.save();
       });
     });
-  }
-
-  deleteItem(elem) {
-    elem.closest(".content-item").remove();
   }
 
   action() {
@@ -51,6 +60,7 @@ export default class WorkList {
             "add-form-hidden"
           );
         }
+        this.save();
       });
 
       //* наведение на элементы
@@ -80,12 +90,12 @@ export default class WorkList {
         this.ghostEl = event.target.cloneNode(true);
         this.ghostEl.classList.add("dragged");
         document.body.appendChild(this.ghostEl);
-        this.ghostEl.style.left = `${
-          event.pageX - this.ghostEl.offsetWidth / 2
-        }px`;
-        this.ghostEl.style.top = `${
-          event.pageY - this.ghostEl.offsetHeight / 2
-        }px`;
+        this.ghostEl.style.width = `${this.draggedEl.offsetWidth}px`;
+        this.ghostEl.style.left = `${this.draggedEl.getBoundingClientRect()}px`;
+        this.ghostEl.style.top = `${this.draggedEl.getBoundingClientRect()}px`;
+        const { top, left } = this.draggedEl.getBoundingClientRect();
+        this.topDiff = event.pageY - top;
+        this.leftDiff = event.pageX - left;
         this.draggedEl.classList.add("dragged-elem");
       });
 
@@ -94,12 +104,8 @@ export default class WorkList {
         if (!this.draggedEl) {
           return;
         }
-        this.ghostEl.style.left = `${
-          event.pageX - this.ghostEl.offsetWidth / 2
-        }px`;
-        this.ghostEl.style.top = `${
-          event.pageY - this.ghostEl.offsetHeight / 2
-        }px`;
+        this.ghostEl.style.left = `${event.pageX - this.leftDiff}px`;
+        this.ghostEl.style.top = `${event.pageY - this.topDiff}px`;
       });
 
       el.addEventListener("mouseup", (event) => {
@@ -117,11 +123,15 @@ export default class WorkList {
           } else {
             parent.insertBefore(this.draggedEl, closest);
           }
+          this.endMove();
+          this.save();
         } else if (parent) {
           parent.appendChild(this.draggedEl);
           this.endMove();
+          this.save();
         } else {
           this.endMove();
+          this.save();
         }
       });
     });
@@ -133,5 +143,61 @@ export default class WorkList {
     this.draggedEl.classList.remove("dragged-elem");
     this.ghostEl = null;
     this.draggedEl = null;
+  }
+
+  save() {
+    const todoCards = this.todoList.querySelectorAll(".content-item");
+    const progressCards = this.progressList.querySelectorAll(".content-item");
+    const doneCards = this.doneList.querySelectorAll(".content-item");
+
+    const data = {
+      todo: [],
+      progress: [],
+      done: [],
+    };
+
+    todoCards.forEach((el) => {
+      const elText = el.querySelector(".item-text");
+      data.todo.push(elText.textContent);
+    });
+
+    progressCards.forEach((el) => {
+      const elText = el.querySelector(".item-text");
+      data.progress.push(elText.textContent);
+    });
+
+    doneCards.forEach((el) => {
+      const elText = el.querySelector(".item-text");
+      data.done.push(elText.textContent);
+    });
+
+    TrelloStorage.save(data);
+  }
+
+  load() {
+    const data = JSON.parse(TrelloStorage.load());
+
+    if (data) {
+      data.todo.forEach((el) => {
+        const addItemDiv = document.createElement("div");
+        addItemDiv.className = "content-item";
+        addItemDiv.innerHTML = `<span class="item-text">${el}</span> <button type="submit" class="delete-item hidden">&#10006</button>`;
+        this.todoList.querySelector(".column-content").appendChild(addItemDiv);
+      });
+      data.progress.forEach((el) => {
+        const addItemDiv = document.createElement("div");
+        addItemDiv.className = "content-item";
+        addItemDiv.innerHTML = `<span class="item-text">${el}</span> <button type="submit" class="delete-item hidden">&#10006</button>`;
+        this.progressList
+          .querySelector(".column-content")
+          .appendChild(addItemDiv);
+      });
+      data.done.forEach((el) => {
+        const addItemDiv = document.createElement("div");
+        addItemDiv.className = "content-item";
+        addItemDiv.innerHTML = `<span class="item-text">${el}</span> <button type="submit" class="delete-item hidden">&#10006</button>`;
+        this.doneList.querySelector(".column-content").appendChild(addItemDiv);
+      });
+    }
   }
 }
